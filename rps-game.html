@@ -20,7 +20,7 @@
 </head>
 <body>
   <div id="button-container">
-    <button id="start-game-button">Play Rock-Paper-Scissors</button>
+    <button id="start-game-button" type="button">Play Rock-Paper-Scissors</button>
   </div>
   <script>
 
@@ -29,87 +29,105 @@
 //Rock Paper Scissors Game
 //*******************************************************************
 
-//CURRENT ISSUES:
-//1: NEED TO FIX IT SO HTML BUTTON STARTS THE GAME
-//2: NEED TO MAKE IT SO THAT THE CHECKWINNER() FUNCTION WORKS PROPERLY
-
 //*******************************************************************
 //Enables the player to start the game via button click
 //*******************************************************************
 
-let gameOn = true; //bool variable used to control the gameplay loop and exit from win-conditions
+let gameOn = false; //bool variable used to control the gameplay loop and exit from win-conditions
 
-function startGame() {
-  gameOn = true;
+document.getElementById("start-game-button").addEventListener("click", playRPS); //event listener that starts the game when the button is clicked
+function playRPS() {
+
+  //*******************************************************************
+  //Plays the game (Main)
+  //*******************************************************************
+  gameOn = true;                          //starts the game loop. Not required for single round play, but is for multi round play.
+  while (gameOn) {
+
+  let computerMove = computerChoice();    //variable to hold value for computers move
+  let playerMove = playerChoice();        //variable to hold value for players move
+  checkWinner(computerMove, playerMove);  //checks to see who won the game and prints results
+
+  }
 }
-//document.getElementById("start-game-button") = startGame();
+  //*******************************************************************
+  //*******************************************************************
+  //Game Functions
+  //*******************************************************************
+  //*******************************************************************
 
-//*******************************************************************
-//Plays the game (Main)
-//*******************************************************************
-while (gameOn) {
-
-let computerMove = computerChoice();    //variable to hold value for computers move
-let playerMove = playerChoice();        //variable to hold value for players move
-checkWinner();                          //checks to see who won the game and prints results
-
-}
-
-//*******************************************************************
-//Game Functions
-//*******************************************************************
-
-//function to control the computer's movement: returns an integer from 1 - 3
-function computerChoice() {
-    let cMove = Math.floor((Math.random() * 3)+1);   
-    let compMove;
-    //***Note*** 1 = rock, 2 = paper, 3 = scissors
-    console.log(`THE COMPUTERS CHOICE IS: ${cMove}`);
-    switch(cMove){   
-      case 1:
-        compMove = 'rock';
-        break;
-      case 2:
-        compMove = 'paper';
-        break;
-      case 3:
-        compMove = 'scissors';
-        break;  
-
-      //default:
-      //console.log("Something went wrong");
-    }
-    console.log(`THE COMPUTERS CHOICE IS: ${compMove}`);
-      return cMove;
-}
-
-
-//function to control the player's move
-function playerChoice() {
+  //*******************************************************************
+  //name: comptuerChoice();
+  //purpose: controls the computer's movement: returns an integer from 1 - 3
+  //returns: a string that contains the computers move choice
+  //*******************************************************************
+  
+  function computerChoice() {
+      let cMove = Math.floor((Math.random() * 3))+1;   
+      let compMove;
+      //***Note*** 1 = rock, 2 = paper, 3 = scissors
+      switch(cMove){   
+        case 1:
+          compMove = 'rock';
+          break;
+        case 2:
+          compMove = 'paper';
+          break;
+        case 3:
+          compMove = 'scissors';
+          break;  
+      }
+        return compMove;
+  }
+  //*******************************************************************
+  //name: playerChoice()
+  //purpose: prompts the player to type in thier move for the game
+  //returns: a string that contains the players move choice
+  //*******************************************************************
+  function playerChoice() {
   let validChoice = false; //bool variable used to gatekeep for only valid user input
   let move;
-//player move is selected within a loop to ensure that a valid choice is made
-  while (!validChoice){
-    //accepts text input from the user for what move they would like to make
-    move = prompt("Make a move: Rock, Paper, or Scissors...");
-    //ensures that the user entered text that is able to be converted to lowercase
-    try {
-      move = move.toLowerCase();
-    } catch (error) {
-      console.log("You must type the name of your move")
-    }
-      //checks for player choice exit condition and breaks the choice loop if true
-      if ((move === "rock") || (move === "paper") || (move === "scissors")) validChoice = true;    
-  }
-  console.log(`THE PLAYERS CHOICE IS: ${move}`);
-  return move; 
-}
 
-function checkWinner(computerMove, playerMove) {
-  //conditions where the computer wins
-    gameOn = false;
-    
-}
+  //player move is selected within a loop to ensure that a valid choice is made
+    while (!validChoice){
+      //accepts text input from the user for what move they would like to make
+      move = prompt("Make a move: Rock, Paper, or Scissors...");
+      //ensures that the user entered text that is able to be converted to lowercase
+      try {
+        move = move.toLowerCase();
+      } catch (error) {
+        console.log("You must type the name of your move")
+      }
+        //checks for player choice exit condition and breaks the choice loop if true
+        if ((move === "rock") || (move === "paper") || (move === "scissors")) validChoice = true;    
+    }
+    return move; 
+  }
+
+  //*******************************************************************
+  //name: checkWinner()
+  //purpose: checks to see which player won the game
+  //*******************************************************************
+  function checkWinner(computerMove, playerMove) {
+
+      gameOn = false; //tops the game loop so it doesn't loop infinitely
+
+      //lists the choices of the players
+      console.log(`The computer chose ${computerMove}`);
+      console.log(`The player chose ${playerMove}`);
+
+      //prints an end of game message to the console
+        if (((playerMove == "rock") && (computerMove == "scissors"))||((playerMove == "scissors") && (computerMove == "paper"))||((playerMove == "paper") && (computerMove == "rock"))) 
+        {
+          console.log(`Congradulations player! Your ${playerMove} beats the computers ${computerMove}`);     
+        }
+        else if (((computerMove == "rock") && (playerMove == "scissors"))||((computerMove == "scissors") && (playerMove == "paper"))||((computerMove == "paper") && (playerMove == "rock"))) 
+        {
+          console.log(`Sorry player! Your ${playerMove} loses to the computers ${computerMove}`);
+        } else {
+          console.log(`It's a tie! Your ${playerMove} was the same as ${computerMove}`);
+        }
+      }
   </script>
 </body>
 </html>
