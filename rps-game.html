@@ -8,19 +8,95 @@
     body {
       width: 99%;
       height: 99%;
+      background-color: gainsboro;
     }
+
+    #title-block {
+      display: flex;
+      justify-content: center;
+    }
+
+    #score-block {
+      display: flex;
+      justify-content: center;
+    }
+    table, td, th {
+      border: solid black 2px;
+    }
+
+    th, td {
+      width: 10rem;
+      height: 2rem;
+      text-align: center;
+    }
+    #game-message-block {
+      display: flex;
+      justify-content: center;
+    }
+
     #button-container {
       display: flex;
       justify-content: center;
       align-items: center;
       align-content: center;
-      padding-top: 20%;
+      padding-top: 5rem;
+    }
+    #radio-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      
     }
   </style>
 </head>
 <body>
+  <div id="title-block">
+    <h1 id="title-text">Rock-Paper-Scissors in Javascript</h1>
+  </div>
+  <div id="score-block">
+    <table>
+      <thead>
+        <tr>
+          <th>Player Score</th>
+          <th>Computer Score</th>
+          <th>Round /5</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="player-score-cell">0</td>
+          <td id="computer-score-cell">0</td>
+          <td id="round-cell">0</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div id="game-message-block">
+      <h3 id="game-message"></h3>
+    </div>
+  
   <div id="button-container">
     <button id="start-game-button" type="button">Play Rock-Paper-Scissors</button>
+  </div>
+  <!-- This radio button group is supposed to allow the user to select the amount of rounds to play, however, I can't get my javascript to return 
+    values from the radio buttons, despite my best efforts to discover how. I'll have to revisit this at a later time when I'm more familiar
+    with how js interacts with html elements. 
+
+  <div id="radio-container">
+    <form name="roundSelection">
+      <fieldset>
+        <legend>Choose the amount of rounds to play</legend>
+          <div>
+            <input type="radio" name="rounds" id="oneRound" value="1" >
+            <label for="oneRound">1 Round</label>
+            <input type="radio" name="rounds" id="threeRound" value="3" checked>
+            <label for="threeRound">3 Rounds</label>
+            <input type="radio" name="rounds" id="fiveRound" value="5">
+            <label for="fiveRound">5 Rounds</label>
+          </div>
+          -->
+      </fieldset>
+    </form>
   </div>
   <script>
 
@@ -29,24 +105,33 @@
 //Rock Paper Scissors Game
 //*******************************************************************
 
+//-------------------------------------------------------------------
+//CURRENT ISSUES:
+//1 MAY ADD SOME MORE BUTTONS OR CLICKABLE ITEMS TO LET THE USER SELECT ROCK/PAPER/SCISSORS
 //*******************************************************************
 //Enables the player to start the game via button click
 //*******************************************************************
 
-let gameOn = false; //bool variable used to control the gameplay loop and exit from win-conditions
+let gameOn = false;     //bool variable used to let the user control when the game begins
+let playerScore = 0;    //integer used to hold player's current score 
+let computerScore = 0;  //integer to keep track of computer score
+let currentRound = 1;   //intger to hold the value of the current round
 
 document.getElementById("start-game-button").addEventListener("click", playRPS); //event listener that starts the game when the button is clicked
+
 function playRPS() {
 
   //*******************************************************************
   //Plays the game (Main)
   //*******************************************************************
-  gameOn = true;                          //starts the game loop. Not required for single round play, but is for multi round play.
-  while (gameOn) {
-
+  gameOn = true;         
+  while ((gameOn == true) && currentRound <= 5) {
+  console.log(`Round ${currentRound} of 5`);
   let computerMove = computerChoice();    //variable to hold value for computers move
   let playerMove = playerChoice();        //variable to hold value for players move
-  checkWinner(computerMove, playerMove);  //checks to see who won the game and prints results
+  checkWinner(computerMove, playerMove, currentRound);  //checks to see who won the game and prints results
+  checkScore(playerScore, computerScore);
+  ++currentRound;
 
   }
 }
@@ -62,11 +147,9 @@ function playRPS() {
   //returns: a string that contains the computers move choice
   //*******************************************************************
   
-  function computerChoice() {
-      let cMove = Math.floor((Math.random() * 3))+1;   
+  function computerChoice() { 
       let compMove;
-      //***Note*** 1 = rock, 2 = paper, 3 = scissors
-      switch(cMove){   
+      switch(Math.floor((Math.random() * 3))+1){   
         case 1:
           compMove = 'rock';
           break;
@@ -108,26 +191,52 @@ function playRPS() {
   //name: checkWinner()
   //purpose: checks to see which player won the game
   //*******************************************************************
-  function checkWinner(computerMove, playerMove) {
+  function checkWinner(computerMove, playerMove, currentRound) {
 
-      gameOn = false; //tops the game loop so it doesn't loop infinitely
+if (currentRound == 6) gameOn = false; //stops the game loop so it doesn't loop infinitely
 
-      //lists the choices of the players
-      console.log(`The computer chose ${computerMove}`);
-      console.log(`The player chose ${playerMove}`);
+//lists the choices of the players
+console.log(`The computer chose ${computerMove}`);
+console.log(`The player chose ${playerMove}`);
 
-      //prints an end of game message to the console
-        if (((playerMove == "rock") && (computerMove == "scissors"))||((playerMove == "scissors") && (computerMove == "paper"))||((playerMove == "paper") && (computerMove == "rock"))) 
-        {
-          console.log(`Congradulations player! Your ${playerMove} beats the computers ${computerMove}`);     
-        }
-        else if (((computerMove == "rock") && (playerMove == "scissors"))||((computerMove == "scissors") && (playerMove == "paper"))||((computerMove == "paper") && (playerMove == "rock"))) 
-        {
-          console.log(`Sorry player! Your ${playerMove} loses to the computers ${computerMove}`);
-        } else {
-          console.log(`It's a tie! Your ${playerMove} was the same as ${computerMove}`);
-        }
-      }
+//prints an end of game message to the console
+  if (((playerMove == "rock") && (computerMove == "scissors"))||((playerMove == "scissors") && (computerMove == "paper"))||((playerMove == "paper") && (computerMove == "rock"))) 
+  {
+    console.log(`Congradulations player! Your ${playerMove} beats the computers ${computerMove}`); 
+    document.getElementById("game-message").innerHTML = `Congradulations player! Your ${playerMove} beats the computers ${computerMove}`;
+    ++playerScore;    
+  }
+  else if (((computerMove == "rock") && (playerMove == "scissors"))||((computerMove == "scissors") && (playerMove == "paper"))||((computerMove == "paper") && (playerMove == "rock"))) 
+  {
+    console.log(`Sorry player! Your ${playerMove} loses to the computers ${computerMove}`);
+    document.getElementById("game-message").innerHTML = `Sorry player! Your ${playerMove} loses to the computers ${computerMove}`;
+    ++computerScore;
+  } else {
+    console.log(`It's a tie! Your ${playerMove} was the same as the computer's ${computerMove}`);
+    document.getElementById("game-message").innerHTML = `It's a tie! Your ${playerMove} was the same as the computer's ${computerMove}`;
+  }
+  //prints an end of game message to the console/webpage
+  if ((currentRound == 5)||(computerScore == 3)||(playerScore == 3)) {
+    if (computerScore > playerScore) {
+      console.log("Looks like the computer wins this time.");
+      document.getElementById("game-message").innerHTML = "Looks like the computer wins this time.";
+    } else {console.log("Congrats on your win player!")
+    document.getElementById("game-message").innerHTML ="Congrats on your win player!"};
+  }
+  //updates the round information in the score table
+  document.getElementById("round-cell").innerHTML = currentRound;
+}
+
+function checkScore(playerScore, computerScore) {
+console.log(`The current score is:`);
+console.log(`Player: ${playerScore} Computer: ${computerScore}`);
+updateScore(playerScore,computerScore);
+}
+
+function updateScore(playerScore, computerScore) {
+document.getElementById("player-score-cell").innerHTML = playerScore;
+document.getElementById("computer-score-cell").innerHTML = computerScore;
+}
   </script>
 </body>
 </html>
