@@ -34,12 +34,15 @@
       justify-content: center;
     }
 
-    #button-container {
+    .button-container {
       display: flex;
       justify-content: center;
       align-items: center;
       align-content: center;
       padding-top: 5rem;
+    }
+    #reset-button-container {
+      visibility: hidden;
     }
     #radio-container {
       display: flex;
@@ -75,11 +78,14 @@
       <h3 id="game-message"></h3>
     </div>
   
-  <div id="button-container">
+  <div class="button-container">
     <button id="start-game-button" type="button">Play Rock-Paper-Scissors</button>
   </div>
+  <div id="reset-button-container" class="button-container">
+    <button id="reset-button" type="reset" onclick="window.location.reload();">Reset the game?</button>
+  </div>
   <!-- This radio button group is supposed to allow the user to select the amount of rounds to play, however, I can't get my javascript to return 
-    values from the radio buttons, despite my best efforts to discover how. I'll have to revisit this at a later time when I'm more familiar
+    values from the radio buttons, despite my best efforts. I'll have to revisit this at a later time when I'm more familiar
     with how js interacts with html elements. 
 
   <div id="radio-container">
@@ -106,8 +112,9 @@
 //*******************************************************************
 
 //-------------------------------------------------------------------
-//CURRENT ISSUES:
+//CURRENT TO DO LIST:
 //1 MAY ADD SOME MORE BUTTONS OR CLICKABLE ITEMS TO LET THE USER SELECT ROCK/PAPER/SCISSORS
+
 //*******************************************************************
 //Enables the player to start the game via button click
 //*******************************************************************
@@ -115,7 +122,7 @@
 let gameOn = false;     //bool variable used to let the user control when the game begins
 let playerScore = 0;    //integer used to hold player's current score 
 let computerScore = 0;  //integer to keep track of computer score
-let currentRound = 1;   //intger to hold the value of the current round
+let currentRound = 0;   //intger to hold the value of the current round
 
 document.getElementById("start-game-button").addEventListener("click", playRPS); //event listener that starts the game when the button is clicked
 
@@ -125,15 +132,15 @@ function playRPS() {
   //Plays the game (Main)
   //*******************************************************************
   gameOn = true;         
-  while ((gameOn == true) && currentRound <= 5) {
+  while ((gameOn == true) && currentRound < 5) {
   console.log(`Round ${currentRound} of 5`);
   let computerMove = computerChoice();    //variable to hold value for computers move
   let playerMove = playerChoice();        //variable to hold value for players move
-  checkWinner(computerMove, playerMove, currentRound);  //checks to see who won the game and prints results
+  checkWinner(computerMove, playerMove);  //checks to see who won the game and prints results
   checkScore(playerScore, computerScore);
-  ++currentRound;
-
   }
+  //makes the page reset button visible after the game has been played
+  document.getElementById("reset-button-container").style.visibility = "visible";
 }
   //*******************************************************************
   //*******************************************************************
@@ -191,9 +198,7 @@ function playRPS() {
   //name: checkWinner()
   //purpose: checks to see which player won the game
   //*******************************************************************
-  function checkWinner(computerMove, playerMove, currentRound) {
-
-if (currentRound == 6) gameOn = false; //stops the game loop so it doesn't loop infinitely
+  function checkWinner(computerMove, playerMove) {
 
 //lists the choices of the players
 console.log(`The computer chose ${computerMove}`);
@@ -205,12 +210,14 @@ console.log(`The player chose ${playerMove}`);
     console.log(`Congradulations player! Your ${playerMove} beats the computers ${computerMove}`); 
     document.getElementById("game-message").innerHTML = `Congradulations player! Your ${playerMove} beats the computers ${computerMove}`;
     ++playerScore;    
+    ++currentRound;
   }
   else if (((computerMove == "rock") && (playerMove == "scissors"))||((computerMove == "scissors") && (playerMove == "paper"))||((computerMove == "paper") && (playerMove == "rock"))) 
   {
     console.log(`Sorry player! Your ${playerMove} loses to the computers ${computerMove}`);
     document.getElementById("game-message").innerHTML = `Sorry player! Your ${playerMove} loses to the computers ${computerMove}`;
     ++computerScore;
+    ++currentRound;
   } else {
     console.log(`It's a tie! Your ${playerMove} was the same as the computer's ${computerMove}`);
     document.getElementById("game-message").innerHTML = `It's a tie! Your ${playerMove} was the same as the computer's ${computerMove}`;
@@ -223,8 +230,12 @@ console.log(`The player chose ${playerMove}`);
     } else {console.log("Congrats on your win player!")
     document.getElementById("game-message").innerHTML ="Congrats on your win player!"};
   }
+  //updates end of game conditions based on the last round of play
+  if (currentRound == 5) gameOn = false; //stops the game loop so it doesn't loop infinitely
+  if ((playerScore == 3) || (computerScore == 3)) gameOn = false;
+
   //updates the round information in the score table
-  document.getElementById("round-cell").innerHTML = currentRound;
+  document.getElementById("round-cell").innerHTML = currentRound.toString();
 }
 
 function checkScore(playerScore, computerScore) {
